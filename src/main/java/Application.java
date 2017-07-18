@@ -1,27 +1,28 @@
-package com.jvzoggel.springboot;
+import hello.wsdl.GetQuoteResponse;
 
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 
-@Configuration
-@ComponentScan
-@EnableAutoConfiguration
 @SpringBootApplication
-public class Application extends SpringBootServletInitializer {
+public class Application {
 
-    public static void main(String[] args)
-    {
-        SpringApplication.run(Application.class, args);
+    public static void main(String[] args) {
+        SpringApplication.run(Application.class);
     }
 
-    @Override
-    protected SpringApplicationBuilder configure(SpringApplicationBuilder application)
-    {
-        return application.sources(Application.class);
+    @Bean
+    CommandLineRunner lookup(QuoteClient quoteClient) {
+        return args -> {
+            String ticker = "MSFT";
+
+            if (args.length > 0) {
+                ticker = args[0];
+            }
+            GetQuoteResponse response = quoteClient.getQuote(ticker);
+            System.err.println(response.getGetQuoteResult());
+        };
     }
+
 }
